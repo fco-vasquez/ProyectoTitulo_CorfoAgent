@@ -1,20 +1,26 @@
 import json
 import time
+import re
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver import ActionChains
 
 
-def _get_label_for_control(ctrl) -> str:
-    """Return a human readable label for the control if possible."""
+def _get_label_for_control(ctrl) -> Optional[str]:
+    """Return a human readable label for the control if possible.
+    Busca en ancestros, elementos previos y por atributo for en el form.
+    Si no encuentra una etiqueta "legible" devuelve None (evita usar id crudo).
+    """
     find = ctrl.find_element
+    # 1) label dentro del form-group más cercano
     try:
         label = find(
             By.XPATH,
-            "./ancestor::div[contains(@class,'form-group')][1]//label",
+            "./ancestor::div[contains(@class,'form-group')][1]//label[normalize-space(text())!=''][1]",
         )
         text = label.text.strip()
         if text:
@@ -22,6 +28,7 @@ def _get_label_for_control(ctrl) -> str:
     except Exception:
         pass
 
+    # 2) etiqueta padre (p. ej. <label><input ...></label>)
     try:
         parent_label = find(By.XPATH, "./parent::label")
         text = parent_label.text.strip()
@@ -30,23 +37,44 @@ def _get_label_for_control(ctrl) -> str:
     except Exception:
         pass
 
+    # 3) label asociado por for en el formulario/ancestro (más fiable que buscar en descendientes)
     try:
         control_id = ctrl.get_attribute("id")
         if control_id:
-            label = ctrl.find_element(By.XPATH, f"//label[@for='{control_id}']")
+            label = find(By.XPATH, f"./ancestor::form[1]//label[@for='{control_id}']")
             text = label.text.strip()
             if text:
                 return text
     except Exception:
         pass
 
-    placeholder = (
-        ctrl.get_attribute("placeholder")
-        or ctrl.get_attribute("name")
-        or ctrl.get_attribute("id")
-        or ""
-    )
-    return placeholder.strip()
+    # 4) label precedente inmediato en el DOM (puede estar fuera del form-group)
+    try:
+        label = find(By.XPATH, "./preceding::label[1]")
+        text = label.text.strip()
+        if text:
+            return text
+    except Exception:
+        pass
+
+    # 5) label descendiente (raro, pero por si el control contiene label internamente)
+    try:
+        label = find(By.XPATH, ".//label[normalize-space(text())!=''][1]")
+        text = label.text.strip()
+        if text:
+            return text
+    except Exception:
+        pass
+
+    # Fallback: placeholder o name, pero sólo si parecen legibles (contienen letras)
+    placeholder = (ctrl.get_attribute("placeholder") or "").strip()
+    if placeholder:
+        return placeholder
+    name = (ctrl.get_attribute("name") or "").strip()
+    if name and re.search(r"[A-Za-zÁÉÍÓÚáéíóúÑñ]", name):
+        return name
+    # No devolver id crudo como label para evitar nombres como "10917038_0"
+    return None
 
 
 def _control_type(ctrl) -> str:
@@ -107,6 +135,7 @@ def extract_form_to_json(
 
     fields: List[Dict[str, Any]] = []
     grouped_radios: Set[Tuple[int, str]] = set()
+    seen_fields: Set[Tuple[Optional[str], Optional[str], Optional[str], str]] = set()
 
     for panel_index, panel in enumerate(panels):
         try:
@@ -114,6 +143,37 @@ def extract_form_to_json(
                 continue
         except Exception:
             continue
+
+        # --- Intentar expandir secciones colapsables dentro del panel ---
+        try:
+            # buscar toggles/headers: enlaces/botones con data-toggle, elementos con aria-controls, y headings (h3)
+            toggle_xpath = (
+                ".//a[@data-toggle='collapse' or @aria-controls] | "
+                ".//button[@data-toggle='collapse' or @aria-controls] | .//h3"
+            )
+            toggles = panel.find_elements(By.XPATH, toggle_xpath)
+
+            # recorrer de forma estable: primero abrir los que estén cerrados y que no sean "Agregar +"
+            for t in toggles:
+                try:
+                    if not t.is_displayed():
+                        continue
+                except Exception:
+                    continue
+
+                # si ya está expandido, no tocar; si está cerrado, abrir y esperar su contenido
+                try:
+                    _ensure_expanded(driver, t, timeout=5)
+                except Exception:
+                    # no fallar el scraping por un toggle problemático
+                    pass
+
+            # dar un pequeño tiempo para que todo el contenido cargue tras las aperturas
+            time.sleep(10)
+
+        except Exception:
+            pass
+        # ----------------------------------------------------------------
 
         controls = panel.find_elements(By.CSS_SELECTOR, "input, textarea, select")
         for ctrl in controls:
@@ -180,6 +240,12 @@ def extract_form_to_json(
                 if choices:
                     field["choices"] = choices
 
+            # Evitar duplicados: tupla (id, name, nombre, tipo)
+            key = (field.get("id"), field.get("name"), field.get("nombre"), field.get("tipo"))
+            if key in seen_fields:
+                continue
+            seen_fields.add(key)
+
             fields.append(field)
 
     with open(output_path, "w", encoding="utf-8") as handle:
@@ -190,6 +256,97 @@ def extract_form_to_json(
         f"Archivo creado: {output_path}"
     )
     return fields
+
+
+def _get_collapse_target(driver, toggle):
+    """Intentar resolver el elemento collapsible asociado al toggle (data-target, href, aria-controls, next-sibling)."""
+    sel = None
+    try:
+        tgt = (toggle.get_attribute("data-target") or "").strip()
+        if not tgt:
+            href = (toggle.get_attribute("href") or "").strip()
+            if href and href.startswith("#"):
+                tgt = href
+        if not tgt:
+            tgt = (toggle.get_attribute("aria-controls") or "").strip()
+        if tgt:
+            # normalizar '#id' a id sin '#'
+            if tgt.startswith("#"):
+                tgt = tgt[1:]
+            try:
+                el = driver.find_element(By.ID, tgt)
+                return el
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    # fallback: buscar un siguiente hermano con clases típicas de collapse/panel-body
+    try:
+        sib = toggle.find_element(By.XPATH, "following-sibling::*[1]")
+        cls = (sib.get_attribute("class") or "").lower()
+        if "collapse" in cls or "panel-collapse" in cls or "panel-body" in cls:
+            return sib
+    except Exception:
+        pass
+
+    return None
+
+
+def _ensure_expanded(driver, toggle, timeout=5):
+    """Asegura que la sección asociada al toggle esté expandida.
+    - Si ya está expandida (aria-expanded true o target visible) no hace nada.
+    - Si está cerrada, intenta abrirla mediante click (con fallback JS) y espera visibilidad.
+    Devuelve True si la sección está visible tras la operación, False en caso contrario.
+    """
+    # evitar botones tipo "Agregar"
+    t_id = (toggle.get_attribute("id") or "").lower()
+    t_text = (toggle.text or "").strip().lower()
+    if t_id.startswith("btnagregar") or "agregar" in t_text:
+        return False
+
+    # 1) Si tiene aria-expanded, respetar su valor (si es 'true' no tocar)
+    aria = toggle.get_attribute("aria-expanded")
+    if aria is not None:
+        if aria.lower() in ("true", "1"):
+            return True
+    # 2) intentar resolver target y comprobar visibilidad
+    target = _get_collapse_target(driver, toggle)
+    if target is not None:
+        try:
+            if target.is_displayed():
+                return True
+        except Exception:
+            pass
+
+    # 3) si no está abierto, intentar abrir con prudencia
+    try:
+        # click normal
+        toggle.click()
+    except Exception:
+        try:
+            ActionChains(driver).move_to_element(toggle).click().perform()
+        except Exception:
+            try:
+                driver.execute_script("arguments[0].click();", toggle)
+            except Exception:
+                pass
+
+    # 4) esperar que el objetivo (si existe) sea visible; si no hay objetivo, esperar un pequeño retraso
+    if target is not None:
+        try:
+            WebDriverWait(driver, timeout).until(EC.visibility_of(target))
+            return True
+        except Exception:
+            return False
+    else:
+        # si no hay target conocido, esperar un breve tiempo para que el DOM se actualice
+        time.sleep(5)
+        # si aria cambia a true, considerarlo éxito
+        aria2 = toggle.get_attribute("aria-expanded")
+        if aria2 and aria2.lower() in ("true", "1"):
+            return True
+        return False
 
 
 if __name__ == "__main__":
