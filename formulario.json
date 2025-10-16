@@ -1,0 +1,502 @@
+[
+  {
+    "nombre": "Título del Proyecto",
+    "tipo": "textarea",
+    "obligatorio": true,
+    "id": "10917032",
+    "placeholder": null,
+    "maxlength": "1000"
+  },
+  {
+    "nombre": "Sector Aplicación del Proyecto",
+    "tipo": "select",
+    "obligatorio": true,
+    "id": "10917033_0",
+    "options": [
+      {
+        "value": "",
+        "text": "- Seleccione una opción -"
+      },
+      {
+        "value": "201",
+        "text": "Acuicultura"
+      },
+      {
+        "value": "202",
+        "text": "Pesca"
+      },
+      {
+        "value": "203",
+        "text": "Productos Agrícola"
+      },
+      {
+        "value": "204",
+        "text": "Forestal  y Silvícola"
+      },
+      {
+        "value": "205",
+        "text": "Pecuario"
+      },
+      {
+        "value": "206",
+        "text": "Vitivinícola"
+      },
+      {
+        "value": "207",
+        "text": "Alimentos Procesados"
+      },
+      {
+        "value": "208",
+        "text": "Minería Metálica"
+      },
+      {
+        "value": "209",
+        "text": "Minería No Metálica"
+      },
+      {
+        "value": "210",
+        "text": "Medioambiente"
+      },
+      {
+        "value": "211",
+        "text": "Construcción e infraestructura (obras civiles)"
+      },
+      {
+        "value": "212",
+        "text": "Energía Renovables No Convencionales"
+      },
+      {
+        "value": "213",
+        "text": "Eficiencia Energética - Smart Grid"
+      },
+      {
+        "value": "214",
+        "text": "Transporte, Logística, Almacnto. y Serv. conexos"
+      },
+      {
+        "value": "215",
+        "text": "Biotecnología"
+      },
+      {
+        "value": "216",
+        "text": "Telecomunicaciones y Medios digitales"
+      },
+      {
+        "value": "217",
+        "text": "Manufactura"
+      },
+      {
+        "value": "218",
+        "text": "Metalmecánica"
+      },
+      {
+        "value": "219",
+        "text": "Química y Petroquímica"
+      },
+      {
+        "value": "220",
+        "text": "Biomedicina"
+      },
+      {
+        "value": "221",
+        "text": "Salud Publica"
+      },
+      {
+        "value": "222",
+        "text": "Industrias Creativas"
+      },
+      {
+        "value": "223",
+        "text": "Educación y capacitación"
+      },
+      {
+        "value": "224",
+        "text": "Servicios Financieros"
+      },
+      {
+        "value": "225",
+        "text": "Servicios Empresariales y Profesionales"
+      },
+      {
+        "value": "226",
+        "text": "Informática y Tecnologías de la Información"
+      },
+      {
+        "value": "227",
+        "text": "Comercio"
+      },
+      {
+        "value": "228",
+        "text": "Turismo"
+      },
+      {
+        "value": "229",
+        "text": "Establecimientos de Alojamiento Turístico -Rest."
+      },
+      {
+        "value": "230",
+        "text": "Otros"
+      },
+      {
+        "value": "232",
+        "text": "Multisectorial"
+      }
+    ]
+  },
+  {
+    "nombre": "Sector Impacto del Proyecto",
+    "tipo": "select",
+    "obligatorio": true,
+    "id": "10917034_0",
+    "options": [
+      {
+        "value": "",
+        "text": "- Seleccione una opción -"
+      },
+      {
+        "value": "0",
+        "text": "Agricultura"
+      },
+      {
+        "value": "1",
+        "text": "Alimentos"
+      },
+      {
+        "value": "2",
+        "text": "Audiovisual"
+      },
+      {
+        "value": "3",
+        "text": "Bovino"
+      },
+      {
+        "value": "4",
+        "text": "Capacitación"
+      },
+      {
+        "value": "5",
+        "text": "Capital Humano"
+      },
+      {
+        "value": "6",
+        "text": "Construcción"
+      },
+      {
+        "value": "7",
+        "text": "Digitalización"
+      },
+      {
+        "value": "8",
+        "text": "Economía Circular"
+      },
+      {
+        "value": "9",
+        "text": "Economía Creativa"
+      },
+      {
+        "value": "10",
+        "text": "Economía Creativa"
+      },
+      {
+        "value": "11",
+        "text": "Emprendedor"
+      },
+      {
+        "value": "12",
+        "text": "Empresas"
+      },
+      {
+        "value": "13",
+        "text": "Energía"
+      },
+      {
+        "value": "14",
+        "text": "Financiamiento"
+      },
+      {
+        "value": "15",
+        "text": "Forestal"
+      },
+      {
+        "value": "16",
+        "text": "Fruticultura"
+      },
+      {
+        "value": "17",
+        "text": "Ganadería"
+      },
+      {
+        "value": "18",
+        "text": "Horticultura"
+      },
+      {
+        "value": "19",
+        "text": "Industria Creativa"
+      },
+      {
+        "value": "20",
+        "text": "Innovador"
+      },
+      {
+        "value": "21",
+        "text": "Inversión"
+      },
+      {
+        "value": "22",
+        "text": "Ley I+D"
+      },
+      {
+        "value": "23",
+        "text": "Logística"
+      },
+      {
+        "value": "24",
+        "text": "Madera"
+      },
+      {
+        "value": "25",
+        "text": "Medioambiente"
+      },
+      {
+        "value": "26",
+        "text": "Mejoramiento de Gestión"
+      },
+      {
+        "value": "27",
+        "text": "Microempresario"
+      },
+      {
+        "value": "28",
+        "text": "Minería"
+      },
+      {
+        "value": "29",
+        "text": "Pesca y Acuicultura"
+      },
+      {
+        "value": "30",
+        "text": "Pregrado"
+      },
+      {
+        "value": "31",
+        "text": "Pyme"
+      },
+      {
+        "value": "32",
+        "text": "Salud"
+      },
+      {
+        "value": "33",
+        "text": "Solar"
+      },
+      {
+        "value": "34",
+        "text": "TIC"
+      },
+      {
+        "value": "35",
+        "text": "Turismo"
+      },
+      {
+        "value": "36",
+        "text": "Vitivinícola"
+      }
+    ]
+  },
+  {
+    "nombre": "Duración del proyecto en meses",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917035",
+    "placeholder": "999",
+    "maxlength": "3"
+  },
+  {
+    "nombre": "Resumen del Proyecto",
+    "tipo": "textarea",
+    "obligatorio": true,
+    "id": "10917036",
+    "placeholder": null,
+    "maxlength": "1000"
+  },
+  {
+    "nombre": "Monto Solicitado (Aporte Corfo)",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917039",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Aporte Beneficiario Pecuniario",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917040",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Aporte Beneficiario No Pecuniario",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917041",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Monto Pecuniario Otros",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917042",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Monto No Pecuniario Otros",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917043",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Costo total del Proyecto",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917044",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Objetivo General del Proyecto",
+    "tipo": "textarea",
+    "obligatorio": true,
+    "id": "10917037",
+    "placeholder": null,
+    "maxlength": "1000"
+  },
+  {
+    "nombre": "Localización Proyecto",
+    "tipo": "select",
+    "obligatorio": true,
+    "id": "10917038_0",
+    "options": [
+      {
+        "value": "",
+        "text": "- Seleccione una opción -"
+      },
+      {
+        "value": "15",
+        "text": "Región de Arica y Parinacota"
+      },
+      {
+        "value": "1",
+        "text": "Región de Tarapacá"
+      },
+      {
+        "value": "2",
+        "text": "Región de Antofagasta"
+      },
+      {
+        "value": "3",
+        "text": "Región de Atacama"
+      },
+      {
+        "value": "4",
+        "text": "Región de Coquimbo"
+      },
+      {
+        "value": "5",
+        "text": "Región de Valparaíso"
+      },
+      {
+        "value": "13",
+        "text": "Región Metropolitana de Santiago"
+      },
+      {
+        "value": "6",
+        "text": "Región del Libertador General Bernardo O’Higgins"
+      },
+      {
+        "value": "7",
+        "text": "Región del Maule"
+      },
+      {
+        "value": "8",
+        "text": "Región del Biobío"
+      },
+      {
+        "value": "9",
+        "text": "Región de La Araucanía"
+      },
+      {
+        "value": "14",
+        "text": "Región de Los Ríos"
+      },
+      {
+        "value": "10",
+        "text": "Región de Los Lagos"
+      },
+      {
+        "value": "11",
+        "text": "Región Aysén del General Carlos Ibáñez del Campo"
+      },
+      {
+        "value": "12",
+        "text": "Región de Magallanes y Antártica Chilena"
+      },
+      {
+        "value": "16",
+        "text": "No informada"
+      }
+    ]
+  },
+  {
+    "nombre": "Monto Solicitado (Aporte Corfo)",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917039",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Aporte Beneficiario Pecuniario",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917040",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Aporte Beneficiario No Pecuniario",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917041",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Monto Pecuniario Otros",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917042",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Monto No Pecuniario Otros",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917043",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  },
+  {
+    "nombre": "Costo total del Proyecto",
+    "tipo": "text",
+    "obligatorio": true,
+    "id": "10917044",
+    "placeholder": "9999999999",
+    "maxlength": "10"
+  }
+]
